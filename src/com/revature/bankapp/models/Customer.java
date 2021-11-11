@@ -1,10 +1,11 @@
 package com.revature.bankapp.models;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Customer {
 
-    private String id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
@@ -59,11 +60,11 @@ public class Customer {
         this.password = password;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

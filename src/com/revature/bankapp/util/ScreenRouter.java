@@ -18,4 +18,7 @@ public class ScreenRouter {
             }
         }
     }
+    public void navigate(String route, int id) {
+
+    }
 }

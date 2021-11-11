@@ -20,29 +20,35 @@ public class CustomerService {
             System.out.println("Enter an appropriate email");
             return false;
         }
-        if(isUserEmpty(user)) {
+        if(!isUserValid(user)) {
             System.out.println("Missing entry for registration");
             return false;
         }
+        /*
         if(isEmailTaken(user)) {
             System.out.println("Email is already in use");
             return false;
         }
+
         if(isUsernameTaken(user)) {
             System.out.println("Username is already in use");
             return false;
         }
+
+         */
         customerDao.save(user);
         return true;
+
+
     }
 
-    public boolean isUserEmpty(Customer user) {
-        if (user == null) return true;
-        if (user.getFirstName() == null || user.getFirstName().trim().equals("")) return true;
-        if (user.getLastName() == null || user.getLastName().trim().equals("")) return true;
-        if (user.getEmail() == null || user.getEmail().trim().equals("")) return true;
-        if (user.getUsername() == null || user.getUsername().trim().equals("")) return true;
-        return user.getPassword() == null || user.getPassword().trim().equals("");
+    public boolean isUserValid(Customer user) {
+        if (user == null) return false;
+        if (user.getFirstName() == null || user.getFirstName().trim().equals("")) return false;
+        if (user.getLastName() == null || user.getLastName().trim().equals("")) return false;
+        if (user.getEmail() == null || user.getEmail().trim().equals("")) return false;
+        if (user.getUsername() == null || user.getUsername().trim().equals("")) return false;
+        return user.getPassword() != null && !user.getPassword().trim().equals("");
     }
 
     public boolean isUsernameValid(Customer user) {
@@ -82,16 +88,8 @@ public class CustomerService {
     }
 
     public boolean isEmailTaken(Customer user) {
-        try (BufferedReader br = new BufferedReader(new FileReader("resources/customerData.txt"))) {
-            String currentLine = br.readLine();
-            while(currentLine != null) {
-                String[] userArray = currentLine.split(":");
-                if(userArray[3].equals(user.getEmail()))
-                    return true;
-                currentLine = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(customerDao.findUserByEmail(user.getEmail()) == null) {
+            return true;
         }
         return false;
     }

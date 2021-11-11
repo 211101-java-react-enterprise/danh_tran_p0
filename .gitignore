@@ -6,3 +6,7 @@
 out/
 *.class
 *.jar
+test/
+
+# Properties Files
+*.properties
