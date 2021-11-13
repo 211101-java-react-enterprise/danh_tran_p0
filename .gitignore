@@ -11,3 +11,4 @@ target/
 
 # Properties Files
 *.properties
+*.log
