@@ -27,18 +27,18 @@ public class AccountCreationScreen extends Screen {
                 if(sessionUser.createNewAccount("savings")) {
                     router.navigate("/choose_account");
                 } else {
-                    System.out.println("Failed to make a savings account, please try again");
+                    logger.warn("Failed to make a savings account, please try again");
                 }
                 break;
             case("2"):
                 if(sessionUser.createNewAccount("checkings")) {
                     router.navigate("/choose_account");
                 } else {
-                    System.out.println("Failed to make a checkings account, please try again");
+                    logger.warn("Failed to make a checkings account, please try again");
                 }
                 break;
             default:
-                System.out.println("User made an invalid selection");
+                logger.warn("User made an invalid selection");
         }
     }
 }

@@ -23,17 +23,19 @@ public class AccountsScreen extends Screen {
 
         switch (userSelection) {
             case ("1"):
+                logger.log("Navigating to account creation screen...");
                 router.navigate("/create_account");
                 break;
             case ("2"):
+                logger.log("Navigating to account choosing screen...");
                 router.navigate("/choose_account");
                 break;
             case ("3"):
+                logger.log("Navigating to dashboard screen...");
                 router.navigate("/dashboard");
-                //router.navigate("/welcome"); not used because it would keep things in the stack trace
                 break;
             default:
-                System.out.println("User entered an invalid option");
+                logger.warn("User entered an invalid option");
         }
     }
 }

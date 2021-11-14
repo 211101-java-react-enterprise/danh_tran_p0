@@ -1,5 +1,6 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.exceptions.NegativeAccountIdException;
 import com.revature.bankapp.exceptions.UnownedAccountException;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.services.AccountService;
@@ -29,7 +30,7 @@ public class ChooseAccountScreen extends Screen {
         }
         Account account = null;
         do {
-            System.out.println("These are your accounts");
+            System.out.println("These are your accounts\n");
 
             for (int i = 0; i < accountList.size(); i++) {
                 account = accountList.get(i);
@@ -42,13 +43,14 @@ public class ChooseAccountScreen extends Screen {
             String userSelection = consoleReader.readLine();
             try {
                 accountService.changeToAccount(accountService.getSessionUser().getSessionUser().getId(), userSelection);
-                System.out.println("Sending user to dashboard...");
+                logger.logPrint("Sending user to dashboard...");
                 router.navigate("/dashboard");
-            } catch (UnownedAccountException e) {
+            } catch (UnownedAccountException | NegativeAccountIdException e) {
                 account = null;
-                System.out.println(e.getMessage());
+                logger.warn(e.getMessage());
             } catch (NumberFormatException e) {
-                System.out.println("You cannot input a non-numeric value");
+                account = null;
+                logger.warn("You cannot input a non-numeric or decimal value");
             }
         } while(account == null);
 

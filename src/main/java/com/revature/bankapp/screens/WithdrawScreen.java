@@ -25,9 +25,11 @@ public class WithdrawScreen extends Screen {
         String moneyToWithdraw = consoleReader.readLine();
         try {
             accountService.withdrawMoney(accountService.getSessionUser().getSessionUser().getCurrentAccount(), moneyToWithdraw);
-            System.out.println("Money successfully withdrew!");
+            logger.info("Money successfully withdrew!");
         } catch (NegativeMoneyChargeException | OverChargeException  | IncorrectFormatException e) {
-            System.out.println(e.getMessage());
+            logger.warn(e.getMessage());
+        } catch (NumberFormatException e) {
+            logger.warn("You cannot input a non-numeric value");
         }
         System.out.println("Returning to dashboard...");
     }

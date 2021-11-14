@@ -26,9 +26,11 @@ public class DepositScreen extends Screen {
         String moneyToDeposit = consoleReader.readLine();
         try {
             accountService.depositMoney(accountService.getSessionUser().getSessionUser().getCurrentAccount(), moneyToDeposit);
-            System.out.println("Money successfully deposited!");
+            logger.info("Money successfully deposited!");
         } catch (NegativeMoneyChargeException | IncorrectFormatException e) {
-            System.out.println(e.getMessage());
+            logger.warn(e.getMessage());
+        } catch (NumberFormatException e) {
+            logger.warn("You cannot input a non-numeric value");
         }
 
         System.out.println("Returning to dashboard...");

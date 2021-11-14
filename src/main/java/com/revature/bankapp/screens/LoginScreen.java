@@ -26,6 +26,7 @@ public class LoginScreen extends Screen {
 
         try {
             customerService.authenticateLogin(username, password);
+            logger.log("Logging in as: %s", username);
             router.navigate("/choose_account");
         } catch(InvalidRequestException | AuthenticationException e) {
             System.out.println(e.getMessage());;

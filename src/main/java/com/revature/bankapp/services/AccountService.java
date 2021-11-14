@@ -1,10 +1,7 @@
 package com.revature.bankapp.services;
 
 import com.revature.bankapp.daos.AccountDao;
-import com.revature.bankapp.exceptions.IncorrectFormatException;
-import com.revature.bankapp.exceptions.NegativeMoneyChargeException;
-import com.revature.bankapp.exceptions.OverChargeException;
-import com.revature.bankapp.exceptions.UnownedAccountException;
+import com.revature.bankapp.exceptions.*;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.models.CheckingsAccount;
 import com.revature.bankapp.models.SavingsAccount;
@@ -36,7 +33,7 @@ public class AccountService {
         }
         double moneyToWithdraw = Double.parseDouble(value);
         if(moneyToWithdraw > account.getMoney()) {
-            throw new OverChargeException("You are attemping to withdraw more than you have");
+            throw new OverChargeException("You are attempting to withdraw more than you have");
         }
         account.setMoney(account.getMoney() - moneyToWithdraw);
         accountDao.update(account);
@@ -69,6 +66,9 @@ public class AccountService {
 
     public void changeToAccount(UUID customer_id, String account_id) {
 
+        if(Integer.parseInt(account_id) < 0) {
+            throw new NegativeAccountIdException("Account IDs can't be negative");
+        }
         account = accountDao.findAccountByCustomerAndAccountId(customer_id, account_id);
         if(account == null) {
             throw new UnownedAccountException("User does not own this account");
@@ -92,6 +92,9 @@ public class AccountService {
     }
 
     public boolean isProperFormat(String value) {
+        if(Double.parseDouble(value) % 1 == 0) {
+            return true;
+        }
         int integerLength = value.indexOf(".");
         int decimalLength = value.length() - 1 - integerLength;
         if(decimalLength > 2) {

@@ -29,21 +29,18 @@ public class CustomerService {
     }
 
     public boolean registerNewUser(Customer user) {
-
-        if(!isEmailValid(user)) {
-            System.out.println("Enter an appropriate email");
-            return false;
-        }
         if(!isUserValid(user)) {
             System.out.println("Missing entry for registration");
             return false;
         }
-
+        if(!isEmailValid(user)) {
+            System.out.println("Email is not a valid email");
+            return false;
+        }
         if(isEmailTaken(user.getEmail())) {
             System.out.println("Email is already in use");
             return false;
         }
-
         if(isUsernameTaken(user.getUsername())) {
             System.out.println("Username is already in use");
             return false;

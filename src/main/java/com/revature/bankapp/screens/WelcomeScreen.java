@@ -21,17 +21,19 @@ public class WelcomeScreen extends Screen {
         String userSelection = consoleReader.readLine();
         switch(userSelection) {
             case("1"):
+                logger.log("Navigating to login screen");
                 router.navigate("/login");
                 break;
             case("2"):
+                logger.log("Navigating to registration screen");
                 router.navigate("/register");
                 break;
             case("3"):
-                System.out.println("Exiting application...");
+                logger.logPrint("Exiting application...");
                 shutdown();
                 break;
             default:
-                System.out.println("User made an invalid selection");
+                logger.warn("User made an invalid selection");
         }
     }
 

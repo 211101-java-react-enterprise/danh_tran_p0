@@ -32,23 +32,27 @@ public class DashboardScreen extends Screen {
 
             switch (userSelection) {
                 case ("1"):
+                    logger.log("Navigating to withdraw screen...");
                     router.navigate("/withdraw");
                     break;
                 case ("2"):
+                    logger.log("Navigating to deposit screen...");
                     router.navigate("/deposit");
                     break;
                 case ("3"):
+                    logger.log("Navigating to accounts screen...");
                     router.navigate("/accounts");
                     break;
                 case("4"):
+                    logger.log("Navigating to transactions screen...");
                     router.navigate("/transactions");
                     break;
                 case ("5"):
                     sessionUser.logout();
-                    //router.navigate("/welcome"); not used because it would keep things in the stack trace
+                    logger.info("Logging out");
                     break;
                 default:
-                    System.out.println("User entered an invalid option");
+                    logger.warn("User entered an invalid option");
             }
         }
     }
