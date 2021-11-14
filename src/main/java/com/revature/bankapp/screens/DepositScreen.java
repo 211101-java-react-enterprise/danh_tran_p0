@@ -1,5 +1,6 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.exceptions.IncorrectFormatException;
 import com.revature.bankapp.exceptions.NegativeMoneyChargeException;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.models.CheckingsAccount;
@@ -22,16 +23,14 @@ public class DepositScreen extends Screen {
     public void render() throws Exception {
 
         System.out.println("How much do you want to deposit?");
-        double moneyToDeposit = Double.parseDouble(consoleReader.readLine());
-        Account account = new CheckingsAccount(accountService.getSessionUser().getSessionUser());
+        String moneyToDeposit = consoleReader.readLine();
         try {
-            accountService.depositMoney(account, moneyToDeposit);
-            System.out.println("Money successfully deposited");
-
-        } catch (NegativeMoneyChargeException e) {
+            accountService.depositMoney(accountService.getSessionUser().getSessionUser().getCurrentAccount(), moneyToDeposit);
+            System.out.println("Money successfully deposited!");
+        } catch (NegativeMoneyChargeException | IncorrectFormatException e) {
             System.out.println(e.getMessage());
         }
 
-        System.out.println("Returning to dashboard");
+        System.out.println("Returning to dashboard...");
     }
 }

@@ -14,15 +14,7 @@ public class CustomerDao implements CrudDAO<Customer> {
     public Customer findUserByUsernameAndPassword(String username, String password) {
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
             //String query = "select * from customer where username = ? and password = ?";
-            String query = "select c.id as customer_id, * from account a\n" +
-                    "join customer c\n" +
-                    "on a.id = (\n" +
-                        "select account_id from customer_account ca \n" +
-                        "where customer_id = (\n" +
-                            "select id from customer\n" +
-                            "where username = ? and password = ?\n" +
-                        ")\n" +
-                    ");\n";
+            String query = "select * from customer where username = ? and password = ?";
             PreparedStatement pstat = conn.prepareStatement(query);
             pstat.setString(1,username);
             pstat.setString(2,password);
@@ -30,7 +22,7 @@ public class CustomerDao implements CrudDAO<Customer> {
             ResultSet rs = pstat.executeQuery();
             if(rs.next()) {
                 Customer customer = new Customer();
-                customer.setId((UUID)rs.getObject("customer_id"));
+                customer.setId((UUID)rs.getObject("id"));
                 customer.setFirstName(rs.getString("first_name"));
                 customer.setLastName(rs.getString("last_name"));
                 customer.setEmail(rs.getString("email"));

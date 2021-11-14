@@ -19,7 +19,7 @@ public class DashboardScreen extends Screen {
     @Override
     public void render() throws Exception {
         while (sessionUser.isSessionActive()) {
-            System.out.println("Welcome to BankingApp " + sessionUser.getSessionUser().getFirstName());
+            System.out.println("Welcome to BankingApp " + sessionUser.getSessionUser().getFirstName() + ". This account currently has $" + String.format("%.2f",sessionUser.getSessionUser().getCurrentAccount().getMoney()));
             String menu = "1) Withdraw\n" +
                           "2) Deposit\n" +
                           "3) Accounts\n" +
@@ -39,6 +39,9 @@ public class DashboardScreen extends Screen {
                     break;
                 case ("3"):
                     router.navigate("/accounts");
+                    break;
+                case("4"):
+                    router.navigate("/transactions");
                     break;
                 case ("5"):
                     sessionUser.logout();

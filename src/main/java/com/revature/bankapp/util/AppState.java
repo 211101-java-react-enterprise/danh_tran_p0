@@ -37,6 +37,8 @@ public class AppState {
         router.addScreen(new WithdrawScreen(consoleReader, router, accountService));
         router.addScreen(new DepositScreen(consoleReader, router, accountService));
         router.addScreen(new ChooseAccountScreen(consoleReader, router, accountService));
+        router.addScreen(new AccountCreationScreen(consoleReader, router, accountService));
+        router.addScreen(new AccountsScreen(consoleReader,router));
         logger.log("Application Initialized");
     }
 

@@ -1,46 +1,54 @@
 package com.revature.bankapp.models;
 
+import java.util.UUID;
+
 public class SavingsAccount implements Account {
 
     private int id;
     private double money;
     private String type;
     private Customer customer;
-    int maxWithdrawlAmount;
+    private int withdrawCap;
 
-
-    public SavingsAccount() {
+    public SavingsAccount(Customer customer) {
+        this.customer = customer;
     }
 
+    public SavingsAccount() {
+        super();
+    }
 
     @Override
     public double getMoney() {
-        return 0;
+        return money;
     }
 
     @Override
     public void setMoney(double money) {
-
+        this.money = money;
     }
 
     @Override
     public int getId() {
-        return 0;
+        return id;
     }
 
     @Override
     public void setId(int id) {
-
+        this.id = id;
     }
 
     @Override
     public Customer getCustomer() {
-        return null;
+        return customer;
     }
 
-    @Override
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public String getType() {
-        return null;
+        return type;
     }
 
     @Override

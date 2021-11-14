@@ -1,6 +1,8 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.exceptions.IncorrectFormatException;
 import com.revature.bankapp.exceptions.NegativeMoneyChargeException;
+import com.revature.bankapp.exceptions.OverChargeException;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.models.CheckingsAccount;
 import com.revature.bankapp.services.AccountService;
@@ -20,13 +22,13 @@ public class WithdrawScreen extends Screen {
     public void render() throws Exception {
 
         System.out.println("How much do you want to withdraw?");
-        double moneyToWithdraw = Double.parseDouble(consoleReader.readLine());
-        Account account = new CheckingsAccount(accountService.getSessionUser().getSessionUser());
+        String moneyToWithdraw = consoleReader.readLine();
         try {
-            accountService.withdrawMoney(account, moneyToWithdraw);
-            System.out.println("Money successfully withdrew");
-        } catch (NegativeMoneyChargeException e) {
+            accountService.withdrawMoney(accountService.getSessionUser().getSessionUser().getCurrentAccount(), moneyToWithdraw);
+            System.out.println("Money successfully withdrew!");
+        } catch (NegativeMoneyChargeException | OverChargeException  | IncorrectFormatException e) {
             System.out.println(e.getMessage());
         }
+        System.out.println("Returning to dashboard...");
     }
 }

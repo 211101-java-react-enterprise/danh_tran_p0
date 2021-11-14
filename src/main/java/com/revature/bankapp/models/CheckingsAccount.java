@@ -1,5 +1,7 @@
 package com.revature.bankapp.models;
 
+import java.util.UUID;
+
 public class CheckingsAccount implements Account {
 
     private int id;
@@ -40,6 +42,9 @@ public class CheckingsAccount implements Account {
         return customer;
     }
 
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     public String getType() {
         return type;

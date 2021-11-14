@@ -1,5 +1,7 @@
 package com.revature.bankapp.models;
 
+import java.util.UUID;
+
 public interface Account {
 
     public double getMoney();
@@ -11,6 +13,8 @@ public interface Account {
     public void setId(int id);
 
     public Customer getCustomer();
+
+    public void setCustomer(Customer customer);
 
     public String getType();
 

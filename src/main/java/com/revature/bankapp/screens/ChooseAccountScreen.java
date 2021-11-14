@@ -34,18 +34,21 @@ public class ChooseAccountScreen extends Screen {
             for (int i = 0; i < accountList.size(); i++) {
                 account = accountList.get(i);
                 String type = account.getType().substring(0, 1).toUpperCase() + account.getType().substring(1);
-                System.out.printf("%s Account current id is %d\n", type, account.getId());
-                System.out.println("Currently deposited money in this account is: " + account.getMoney());
+                System.out.printf("%s Account id is %s\n", type, account.getId());
+                System.out.println("Current deposited money in this account is: $" + String.format("%.2f",account.getMoney()));
+                System.out.println();
             }
             System.out.println("Select an account id to continue");
             String userSelection = consoleReader.readLine();
             try {
-                accountService.getAccountById(userSelection);
+                accountService.changeToAccount(accountService.getSessionUser().getSessionUser().getId(), userSelection);
                 System.out.println("Sending user to dashboard...");
                 router.navigate("/dashboard");
             } catch (UnownedAccountException e) {
                 account = null;
                 System.out.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.out.println("You cannot input a non-numeric value");
             }
         } while(account == null);
 

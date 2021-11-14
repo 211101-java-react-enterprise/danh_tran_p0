@@ -1,5 +1,6 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.services.AccountService;
 import com.revature.bankapp.util.ScreenRouter;
 
 import java.io.BufferedReader;
@@ -22,10 +23,10 @@ public class AccountsScreen extends Screen {
 
         switch (userSelection) {
             case ("1"):
-                router.navigate("/account_creation");
+                router.navigate("/create_account");
                 break;
             case ("2"):
-                router.navigate("/display_accounts");
+                router.navigate("/choose_account");
                 break;
             case ("3"):
                 router.navigate("/dashboard");
