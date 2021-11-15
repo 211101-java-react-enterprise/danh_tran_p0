@@ -78,4 +78,8 @@ public class Logger {
             e.printStackTrace();
         }
     }
+
+    public void warnUser(String msg) {
+        System.out.println(ANSI_YELLOW + msg + ANSI_RESET);
+    }
 }

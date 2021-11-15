@@ -1,9 +1,6 @@
 package com.revature.bankapp.daos;
 
-import com.revature.bankapp.models.Account;
-import com.revature.bankapp.models.CheckingsAccount;
-import com.revature.bankapp.models.Customer;
-import com.revature.bankapp.models.SavingsAccount;
+import com.revature.bankapp.models.*;
 import com.revature.bankapp.util.collections.LinkedList;
 import com.revature.bankapp.util.collections.List;
 import com.revature.bankapp.util.datasource.ConnectionFactory;
@@ -82,6 +79,53 @@ public class AccountDao implements CrudDAO<Account> {
         } catch(SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Transactions> viewAllAccountsTransactions(String customer_id) {
+
+        List<Transactions> transactionsList = new LinkedList<>();
+        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
+
+            String query = "select * from transactions_log tl\n" +
+                    "join account a on a.id = tl.account_id\n" +
+                    "join customer_account ca on ca.account_id = a.id \n" +
+                    "where ca.customer_id = ?";
+            PreparedStatement pstat = conn.prepareStatement(query);
+            pstat.setObject(1, UUID.fromString(customer_id));
+            ResultSet rs = pstat.executeQuery();
+            while(rs.next()) {
+                Transactions transactions = new Transactions();
+                transactions.setDescription(rs.getString("description"));
+                transactions.setDate(rs.getTimestamp("date"));
+                transactions.setAccount_id(rs.getInt("account_id"));
+                transactionsList.add(transactions);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactionsList;
+    }
+
+    public List<Transactions> selectTransactionByAccountId(String account_id) {
+
+        List<Transactions> transactionsList = new LinkedList<>();
+        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
+
+            String query = "select * from transactions_log where account_id = ?";
+            PreparedStatement pstat = conn.prepareStatement(query);
+            pstat.setInt(1, Integer.parseInt(account_id));
+            ResultSet rs = pstat.executeQuery();
+            while(rs.next()) {
+                Transactions transactions = new Transactions();
+                transactions.setDescription(rs.getString("description"));
+                transactions.setDate(rs.getTimestamp("date"));
+                transactionsList.add(transactions);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactionsList;
     }
 
     @Override

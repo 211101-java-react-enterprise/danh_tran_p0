@@ -25,6 +25,7 @@ public class AccountCreationScreen extends Screen {
         switch(userSelection) {
             case("1"):
                 if(sessionUser.createNewAccount("savings")) {
+                    logger.log("Successfully created a savings account");
                     router.navigate("/choose_account");
                 } else {
                     logger.warn("Failed to make a savings account, please try again");
@@ -32,6 +33,7 @@ public class AccountCreationScreen extends Screen {
                 break;
             case("2"):
                 if(sessionUser.createNewAccount("checkings")) {
+                    logger.log("Successfully created a checkings account");
                     router.navigate("/choose_account");
                 } else {
                     logger.warn("Failed to make a checkings account, please try again");
@@ -39,6 +41,7 @@ public class AccountCreationScreen extends Screen {
                 break;
             default:
                 logger.warn("User made an invalid selection");
+                logger.warn("Returning to the dashboard...");
         }
     }
 }

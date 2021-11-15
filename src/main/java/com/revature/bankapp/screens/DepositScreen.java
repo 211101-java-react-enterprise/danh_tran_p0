@@ -33,6 +33,6 @@ public class DepositScreen extends Screen {
             logger.warn("You cannot input a non-numeric value");
         }
 
-        System.out.println("Returning to dashboard...");
+        logger.logPrint("Returning to dashboard...");
     }
 }

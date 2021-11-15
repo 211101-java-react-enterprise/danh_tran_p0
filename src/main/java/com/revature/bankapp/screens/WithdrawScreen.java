@@ -31,6 +31,6 @@ public class WithdrawScreen extends Screen {
         } catch (NumberFormatException e) {
             logger.warn("You cannot input a non-numeric value");
         }
-        System.out.println("Returning to dashboard...");
+        logger.logPrint("Returning to dashboard...");
     }
 }

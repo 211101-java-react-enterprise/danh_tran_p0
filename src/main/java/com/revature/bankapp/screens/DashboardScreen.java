@@ -23,7 +23,7 @@ public class DashboardScreen extends Screen {
             String menu = "1) Withdraw\n" +
                           "2) Deposit\n" +
                           "3) Accounts\n" +
-                          "4) Display Transactions\n" +
+                          "4) Display Transactions History\n" +
                           "5) Logout";
             System.out.println(menu);
 
@@ -45,7 +45,7 @@ public class DashboardScreen extends Screen {
                     break;
                 case("4"):
                     logger.log("Navigating to transactions screen...");
-                    router.navigate("/transactions");
+                    router.navigate("/transaction_history");
                     break;
                 case ("5"):
                     sessionUser.logout();
