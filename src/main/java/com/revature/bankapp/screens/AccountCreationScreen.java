@@ -1,7 +1,9 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.models.Account;
+import com.revature.bankapp.models.CheckingsAccount;
+import com.revature.bankapp.models.SavingsAccount;
 import com.revature.bankapp.services.AccountService;
-import com.revature.bankapp.services.CustomerService;
 import com.revature.bankapp.util.ScreenRouter;
 
 import java.io.BufferedReader;
@@ -22,9 +24,11 @@ public class AccountCreationScreen extends Screen {
                            "2) Checkings");
         String userSelection = consoleReader.readLine();
 
+        Account account;
         switch(userSelection) {
             case("1"):
-                if(sessionUser.createNewAccount("savings")) {
+                account = new SavingsAccount();
+                if(sessionUser.createNewAccount(account)) {
                     logger.log("Successfully created a savings account");
                     router.navigate("/choose_account");
                 } else {
@@ -32,7 +36,8 @@ public class AccountCreationScreen extends Screen {
                 }
                 break;
             case("2"):
-                if(sessionUser.createNewAccount("checkings")) {
+                account = new CheckingsAccount();
+                if(sessionUser.createNewAccount(account)) {
                     logger.log("Successfully created a checkings account");
                     router.navigate("/choose_account");
                 } else {

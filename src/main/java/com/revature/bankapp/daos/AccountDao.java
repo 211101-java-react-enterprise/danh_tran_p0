@@ -6,20 +6,16 @@ import com.revature.bankapp.util.collections.List;
 import com.revature.bankapp.util.datasource.ConnectionFactory;
 
 import java.sql.*;
-import java.time.LocalDateTime;
-
-import javax.xml.transform.Result;
 import java.util.UUID;
 
 public class AccountDao implements CrudDAO<Account> {
 
-    //here we should write two separate queries, one for account table,
-    // another one for customer_account(customer_id, account_id) table
+    //persists the account creation into the database
     @Override
     public Account save(Account newAccount) {
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
-            String query1 = "insert into account(id, type) values ((select max(id)+1 from account), ?)";
+            String query1 = "insert into account(type) values (?)";
             PreparedStatement pstat1 = conn.prepareStatement(query1);
             pstat1.setString(1, newAccount.getType());
             int rowsInserted = pstat1.executeUpdate();
@@ -30,8 +26,6 @@ public class AccountDao implements CrudDAO<Account> {
                 pstat2.executeUpdate();
                 return newAccount;
             }
-            return null;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -70,80 +64,22 @@ public class AccountDao implements CrudDAO<Account> {
         return false;
     }
 
-    public void addTransactionRecord(Account account, double money) {
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            String query = "";
-            PreparedStatement pstat = conn.prepareStatement(query);
-
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Transactions> viewAllAccountsTransactions(String customer_id) {
-
-        List<Transactions> transactionsList = new LinkedList<>();
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            String query = "select * from transactions_log tl\n" +
-                    "join account a on a.id = tl.account_id\n" +
-                    "join customer_account ca on ca.account_id = a.id \n" +
-                    "where ca.customer_id = ?";
-            PreparedStatement pstat = conn.prepareStatement(query);
-            pstat.setObject(1, UUID.fromString(customer_id));
-            ResultSet rs = pstat.executeQuery();
-            while(rs.next()) {
-                Transactions transactions = new Transactions();
-                transactions.setDescription(rs.getString("description"));
-                transactions.setDate(rs.getTimestamp("date"));
-                transactions.setAccount_id(rs.getInt("account_id"));
-                transactionsList.add(transactions);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return transactionsList;
-    }
-
-    public List<Transactions> selectTransactionByAccountId(String account_id) {
-
-        List<Transactions> transactionsList = new LinkedList<>();
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            String query = "select * from transactions_log where account_id = ?";
-            PreparedStatement pstat = conn.prepareStatement(query);
-            pstat.setInt(1, Integer.parseInt(account_id));
-            ResultSet rs = pstat.executeQuery();
-            while(rs.next()) {
-                Transactions transactions = new Transactions();
-                transactions.setDescription(rs.getString("description"));
-                transactions.setDate(rs.getTimestamp("date"));
-                transactionsList.add(transactions);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return transactionsList;
-    }
-
     @Override
     public boolean delete(String id) {
         return false;
     }
-
-    public List<Account> findAccountsByCustomerId(Customer customer) {
+    //Find all accounts that are owned by the current user
+    public List<Account> findAccountsByCustomerId(String customer_id) {
         List<Account> myAccounts = new LinkedList<>();
 
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
-            String query = "select * from customer c\n" +
-                    "join customer_account ca on ca.customer_id = c.id\n" +
-                    "join account a on a.id = ca.account_id\n" +
-                    "where c.id = ?;";
+            String query = "select * from account a\n" +
+                    "join customer_account ca on ca.account_id = a.id \n" +
+                    "where ca.customer_id = ?\n" +
+                    "order by type, a.id ";
             PreparedStatement pstat = conn.prepareStatement(query);
-            pstat.setObject(1,customer.getId());
+            pstat.setObject(1,UUID.fromString(customer_id));
 
             ResultSet rs = pstat.executeQuery();
             while(rs.next()) {
@@ -154,7 +90,6 @@ public class AccountDao implements CrudDAO<Account> {
                 } else if(type.equals("savings")) {
                     account = new SavingsAccount();
                 }
-                account.setType(rs.getString("type"));
                 account.setMoney(rs.getDouble("money"));
                 account.setId(rs.getInt("account_id"));
                 myAccounts.add(account);
@@ -167,12 +102,13 @@ public class AccountDao implements CrudDAO<Account> {
 
     }
 
+    //find a particular account owned by user
     public Account findAccountByCustomerAndAccountId(UUID customer_id, String account_id) {
 
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String query = "select * from account a\n" +
-                           "join customer_account ca on ca.account_id = a.id\n" +
-                           "where a.id = ? and ca.customer_id = ?;\n";
+                          "join customer_account ca on ca.account_id = a.id\n" +
+                          "where a.id = ? and ca.customer_id = ?\n";
             PreparedStatement pstat = conn.prepareStatement(query);
             pstat.setInt(1, Integer.parseInt(account_id));
             pstat.setObject(2, customer_id);
@@ -186,7 +122,6 @@ public class AccountDao implements CrudDAO<Account> {
                 } else if (type.equals("savings")) {
                     account = new SavingsAccount();
                 }
-                account.setType(type);
                 account.setMoney(rs.getDouble("money"));
                 account.setId(rs.getInt("id"));
                 return account;
@@ -196,6 +131,24 @@ public class AccountDao implements CrudDAO<Account> {
         }
         return null;
 
+    }
+
+    //Adds a transaction record alongside the withdraw and deposit methods
+    public void addTransactionRecord(Account account, String description) {
+        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
+
+            String query = "insert into transactions_log (id, description, date, account_id)" +
+                    " values (?, ?, ?, ?)";
+            PreparedStatement pstat = conn.prepareStatement(query);
+            pstat.setObject(1, UUID.randomUUID());
+            pstat.setString(2,description);
+            pstat.setTimestamp(3,new Timestamp(System.currentTimeMillis()));
+            pstat.setInt(4, account.getId());
+            pstat.executeUpdate();
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

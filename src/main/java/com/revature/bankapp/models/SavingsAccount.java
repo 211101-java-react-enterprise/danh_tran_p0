@@ -1,12 +1,10 @@
 package com.revature.bankapp.models;
 
-import java.util.UUID;
-
 public class SavingsAccount implements Account {
 
     private int id;
     private double money;
-    private String type;
+    private final String type = "savings";
     private Customer customer;
     private int withdrawCap;
 
@@ -50,11 +48,5 @@ public class SavingsAccount implements Account {
     public String getType() {
         return type;
     }
-
-    @Override
-    public void setType(String type) {
-        this.type = type;
-    }
-
 
 }

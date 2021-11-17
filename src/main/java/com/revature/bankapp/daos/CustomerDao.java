@@ -1,6 +1,5 @@
 package com.revature.bankapp.daos;
 
-import com.revature.bankapp.models.Account;
 import com.revature.bankapp.models.Customer;
 import com.revature.bankapp.util.datasource.ConnectionFactory;
 
@@ -14,7 +13,7 @@ public class CustomerDao implements CrudDAO<Customer> {
     public Customer findUserByUsernameAndPassword(String username, String password) {
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
             //String query = "select * from customer where username = ? and password = ?";
-            String query = "select * from customer where username = ? and password = ?";
+            String query = "select * from customer where username = LOWER(?) and password = ?";
             PreparedStatement pstat = conn.prepareStatement(query);
             pstat.setString(1,username);
             pstat.setString(2,password);
@@ -37,6 +36,7 @@ public class CustomerDao implements CrudDAO<Customer> {
         return null;
     }
 
+    //Used to find if a username has been taken already
     public Customer findUserByUsername(String username) {
         try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
             String query = "select * from customer where username = ?";
@@ -61,7 +61,6 @@ public class CustomerDao implements CrudDAO<Customer> {
         return null;
     }
 
-    //isn't necessarily only for CustomerService.isEmailTaken,
     //can be used in forgot username
     //Finds user data by their email
     public Customer findUserByEmail(String email) {
@@ -95,7 +94,7 @@ public class CustomerDao implements CrudDAO<Customer> {
 
             newUser.setId(UUID.randomUUID());
 
-            String query = "insert into customer (id, first_name, last_name, email, username, password) values (?, ?, ?, ?, ?, ?)";
+            String query = "insert into customer (id, first_name, last_name, email, username, password) values (?, ?, ?, ?, LOWER(?), ?)";
             PreparedStatement pstat = conn.prepareStatement(query);
             pstat.setObject(1, newUser.getId());
             pstat.setString(2, newUser.getFirstName());

@@ -2,6 +2,7 @@ package com.revature.bankapp.services;
 
 import com.revature.bankapp.exceptions.AuthenticationException;
 import com.revature.bankapp.exceptions.InvalidRequestException;
+import com.revature.bankapp.exceptions.ResourcePersistenceException;
 import com.revature.bankapp.models.Customer;
 import com.revature.bankapp.daos.CustomerDao;
 
@@ -16,6 +17,7 @@ public class CustomerService {
         sessionUser = null;
     }
 
+    //Used to grab the current user customer
     public Customer getSessionUser() {
         return sessionUser;
     }
@@ -24,33 +26,34 @@ public class CustomerService {
         sessionUser = null;
     }
 
+    //Used to user doesn't drop out of dashboard screen when finished on other screens
     public boolean isSessionActive() {
         return sessionUser != null;
     }
 
     public boolean registerNewUser(Customer user) {
         if(!isUserValid(user)) {
-            System.out.println("Missing entry for registration");
-            return false;
+            throw new InvalidRequestException("Invalid user data provided");
         }
         if(!isEmailValid(user)) {
-            System.out.println("Email is not a valid email");
-            return false;
+            throw new InvalidRequestException("Invalid email provided");
         }
         if(isEmailTaken(user.getEmail())) {
-            System.out.println("Email is already in use");
-            return false;
+            throw new ResourcePersistenceException("Email provided is already taken.");
         }
         if(isUsernameTaken(user.getUsername())) {
-            System.out.println("Username is already in use");
-            return false;
+            throw new ResourcePersistenceException("Username provided is already taken.");
         }
 
-        customerDao.save(user);
+        Customer newCustomer = customerDao.save(user);
+        if(newCustomer == null) {
+            throw new ResourcePersistenceException("User could not be created at this time");
+        }
         return true;
 
     }
 
+    //user validation to check if user
     public boolean isUserValid(Customer user) {
         if (user == null) return false;
         if (user.getFirstName() == null || user.getFirstName().trim().equals("")) return false;
@@ -60,15 +63,11 @@ public class CustomerService {
         return user.getPassword() != null && !user.getPassword().trim().equals("");
     }
 
-    public boolean isUsernameValid(Customer user) {
-
-        return true;
-    }
-
     public boolean isUsernameTaken(String username) {
         return customerDao.findUserByUsername(username) != null;
     }
 
+    //Used to login user customer if matches with correct credentials
     public void authenticateLogin(String username, String password) {
         if(username == null || username.equals("") || password == null || password.equals("")) {
             throw new InvalidRequestException("Invalid Credentials provided");

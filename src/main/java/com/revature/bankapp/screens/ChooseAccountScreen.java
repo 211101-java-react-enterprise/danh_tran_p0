@@ -5,7 +5,6 @@ import com.revature.bankapp.exceptions.UnownedAccountException;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.services.AccountService;
 import com.revature.bankapp.util.ScreenRouter;
-import com.revature.bankapp.util.collections.LinkedList;
 import com.revature.bankapp.util.collections.List;
 
 import java.io.BufferedReader;
@@ -29,6 +28,7 @@ public class ChooseAccountScreen extends Screen {
             return;
         }
         Account account = null;
+        //stays in a loop if an account hasn't been selected
         do {
             System.out.println("These are your accounts\n");
 

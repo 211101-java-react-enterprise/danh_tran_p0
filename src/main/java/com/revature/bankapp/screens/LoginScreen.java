@@ -2,7 +2,6 @@ package com.revature.bankapp.screens;
 
 import com.revature.bankapp.exceptions.AuthenticationException;
 import com.revature.bankapp.exceptions.InvalidRequestException;
-import com.revature.bankapp.models.Customer;
 import com.revature.bankapp.services.CustomerService;
 import com.revature.bankapp.util.ScreenRouter;
 

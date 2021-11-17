@@ -18,8 +18,6 @@ public interface Account {
 
     public String getType();
 
-    public void setType(String type);
-
     //should maybe just get the customer ID instead of the whole customer object
     //public LinkedList<Customer> getCustomer() return customerList;
 

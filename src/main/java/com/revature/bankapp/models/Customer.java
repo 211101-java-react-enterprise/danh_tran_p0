@@ -1,7 +1,5 @@
 package com.revature.bankapp.models;
 
-import com.revature.bankapp.util.collections.LinkedList;
-
 import java.util.Objects;
 import java.util.UUID;
 

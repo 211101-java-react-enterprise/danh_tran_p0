@@ -1,7 +1,5 @@
 package com.revature.bankapp.screens;
 
-import com.revature.bankapp.models.Account;
-import com.revature.bankapp.models.Customer;
 import com.revature.bankapp.services.CustomerService;
 import com.revature.bankapp.util.ScreenRouter;
 
@@ -10,7 +8,6 @@ import java.io.BufferedReader;
 public class DashboardScreen extends Screen {
 
     CustomerService sessionUser;
-    //Probably need to pass in the account class into the constructor
     public DashboardScreen(BufferedReader consoleReader, ScreenRouter router, CustomerService sessionUser) {
         super("DashboardScreen", "/dashboard", consoleReader, router);
         this.sessionUser = sessionUser;

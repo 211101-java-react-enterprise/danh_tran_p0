@@ -2,11 +2,11 @@ package com.revature.bankapp.util;
 
 import com.revature.bankapp.daos.AccountDao;
 import com.revature.bankapp.daos.CustomerDao;
-import com.revature.bankapp.models.Account;
-import com.revature.bankapp.models.Customer;
+import com.revature.bankapp.daos.TransactionDao;
 import com.revature.bankapp.screens.*;
 import com.revature.bankapp.services.AccountService;
 import com.revature.bankapp.services.CustomerService;
+import com.revature.bankapp.services.TransactionService;
 import com.revature.bankapp.util.logging.Logger;
 
 import java.io.BufferedReader;
@@ -29,7 +29,9 @@ public class AppState {
         CustomerService customerService = new CustomerService(customerDao);
 
         AccountDao accountDao = new AccountDao();
+        TransactionDao transactionDao = new TransactionDao();
         AccountService accountService = new AccountService(accountDao, customerService);
+        TransactionService transactionService = new TransactionService(transactionDao, accountService);
         router.addScreen(new WelcomeScreen(consoleReader, router));
         router.addScreen(new RegisterScreen(consoleReader,router, customerService));
         router.addScreen(new LoginScreen(consoleReader, router, customerService));
@@ -39,7 +41,7 @@ public class AppState {
         router.addScreen(new ChooseAccountScreen(consoleReader, router, accountService));
         router.addScreen(new AccountCreationScreen(consoleReader, router, accountService));
         router.addScreen(new AccountsScreen(consoleReader,router));
-        router.addScreen(new TransactionHistoryScreen(consoleReader, router, accountService));
+        router.addScreen(new TransactionHistoryScreen(consoleReader, router, transactionService));
         logger.log("Application Initialized");
     }
 

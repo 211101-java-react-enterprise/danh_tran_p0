@@ -1,5 +1,7 @@
 package com.revature.bankapp.screens;
 
+import com.revature.bankapp.exceptions.InvalidRequestException;
+import com.revature.bankapp.exceptions.ResourcePersistenceException;
 import com.revature.bankapp.models.Customer;
 import com.revature.bankapp.services.CustomerService;
 import com.revature.bankapp.util.ScreenRouter;
@@ -35,13 +37,16 @@ public class RegisterScreen extends Screen {
         System.out.print("Password: ");
         String password = consoleReader.readLine();
 
-        Customer user = new Customer(firstName, lastName, email, username, password);
+        Customer user = new Customer(firstName, lastName, email, username.toLowerCase(), password);
 
-        if(customerService.registerNewUser(user)) {
+        try {
+            customerService.registerNewUser(user);
             logger.log("Created account: First Name: %s : Last Name: %s : Email: %s : Username: %s", firstName, lastName, email, username);
+            logger.info("Registration Successful");
             router.navigate("/account_creation");
-        } else {
-            logger.warn("Failed to create user, please try again");
+
+        } catch (InvalidRequestException | ResourcePersistenceException e) {
+            logger.warn(e.getMessage());
             logger.log("Attempted created account: First Name: %s : Last Name: %s : Email: %s : Username: %s",firstName, lastName, email, username);
         }
 

@@ -5,24 +5,23 @@ import com.revature.bankapp.exceptions.InvalidRequestException;
 import com.revature.bankapp.exceptions.UnownedAccountException;
 import com.revature.bankapp.models.Account;
 import com.revature.bankapp.models.Transactions;
-import com.revature.bankapp.services.AccountService;
+import com.revature.bankapp.services.TransactionService;
 import com.revature.bankapp.util.ScreenRouter;
-import com.revature.bankapp.util.collections.LinkedList;
 import com.revature.bankapp.util.collections.List;
 
 import java.io.BufferedReader;
 
 public class TransactionHistoryScreen extends Screen {
 
-    AccountService accountService;
-    public TransactionHistoryScreen(BufferedReader consoleReader, ScreenRouter router, AccountService accountService) {
+    TransactionService transactionService;
+    public TransactionHistoryScreen(BufferedReader consoleReader, ScreenRouter router, TransactionService transactionServiceService) {
         super("TransactionHistory", "/transaction_history", consoleReader, router);
-        this.accountService = accountService;
+        this.transactionService = transactionServiceService;
     }
 
     @Override
     public void render() throws Exception {
-        List<Account> accountList = accountService.returnMyAccounts();
+        List<Account> accountList = transactionService.getCurrentAccount().returnMyAccounts();
         System.out.println("Which account transactions would you like to view?");
         logger.warnUser("Select 0 for all accounts");
         Account account;
@@ -38,9 +37,9 @@ public class TransactionHistoryScreen extends Screen {
             String userSelection = consoleReader.readLine();
             try {
                 if (userSelection.equals("0")) {
-                    transactionsList = accountService.viewAllTransactions(accountService.getSessionUser().getSessionUser().getId().toString());
+                    transactionsList = transactionService.viewAllTransactions(transactionService.getCurrentAccount().getSessionUser().getSessionUser().getId().toString());
                 } else {
-                    transactionsList = accountService.viewSingleTransactions(userSelection);
+                    transactionsList = transactionService.viewSingleTransactions(userSelection);
                 }
                 for(int i = 0; i < transactionsList.size(); i++) {
                     System.out.printf("%s: Account %d: %s\n", transactionsList.get(i).getDate(), transactionsList.get(i).getAccount_id(), transactionsList.get(i).getDescription());
@@ -48,6 +47,6 @@ public class TransactionHistoryScreen extends Screen {
             } catch (UnownedAccountException | EmptyTransactionsException | InvalidRequestException e) {
                 logger.warn(e.getMessage());
             }
-
+            logger.logPrint("Returning to dashboard...");
     }
 }

@@ -3,13 +3,12 @@ package com.revature.bankapp.util.collections;
 public class LinkedList<T> implements List<T> {
 
     private int size;
-    private Node<T> head; // implicitly null
-    private Node<T> tail = null; // you can explicitly declare them as null, but it's not required.
+    private Node<T> head;
+    private Node<T> tail = null;
 
     @Override
     public boolean add(T data) {
 
-        // Not required, as some data structures do allow for null values.
         if (data == null) {
             return false;
         }

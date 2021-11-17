@@ -1,6 +1,5 @@
 package com.revature.bankapp.screens;
 
-import com.revature.bankapp.util.AppState;
 import com.revature.bankapp.util.ScreenRouter;
 import static com.revature.bankapp.util.AppState.shutdown;
 

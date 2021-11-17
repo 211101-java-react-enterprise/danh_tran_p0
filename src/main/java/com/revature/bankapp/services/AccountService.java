@@ -3,16 +3,13 @@ package com.revature.bankapp.services;
 import com.revature.bankapp.daos.AccountDao;
 import com.revature.bankapp.exceptions.*;
 import com.revature.bankapp.models.Account;
-import com.revature.bankapp.models.CheckingsAccount;
-import com.revature.bankapp.models.SavingsAccount;
-import com.revature.bankapp.models.Transactions;
 import com.revature.bankapp.util.collections.List;
 
 import java.util.UUID;
 
 public class AccountService {
 
-    private Account account;
+    private Account currentAccount;
     private final CustomerService sessionUser;
     private final AccountDao accountDao;
 
@@ -21,6 +18,7 @@ public class AccountService {
         this.sessionUser = sessionUser;
     }
 
+    //withdraws money from the current account
     public boolean withdrawMoney(Account account, String value) {
         if(!isProperFormat(value)) {
             throw new IncorrectFormatException("Please enter a numeric value with no more than 2 decimal places");
@@ -36,9 +34,13 @@ public class AccountService {
             throw new OverChargeException("You are attempting to withdraw more than you have");
         }
         account.setMoney(account.getMoney() - moneyToWithdraw);
+
+        String description = String.format("Withdrew $%.2f", moneyToWithdraw);
+        accountDao.addTransactionRecord(account, description);
         return accountDao.update(account);
     }
 
+    //deposits money into the current account
     public boolean depositMoney(Account account, String value) {
         if(!isProperFormat(value)) {
             throw new IncorrectFormatException("Please enter a numeric value with no more than 2 decimal places");
@@ -46,13 +48,14 @@ public class AccountService {
         if(!isNumeric(value)) {
             throw new IncorrectFormatException("Please enter a positive numeric value");
         }
-
         if(!isPositiveNumber(value)) {
             throw new NegativeMoneyChargeException("User is not allowed to enter a negative number");
         }
         double moneyToDeposit = Double.parseDouble(value);
 
         account.setMoney(account.getMoney() + moneyToDeposit);
+        String description = String.format("Deposited $%.2f", moneyToDeposit);
+        accountDao.addTransactionRecord(account, description);
         return accountDao.update(account);
     }
 
@@ -60,23 +63,26 @@ public class AccountService {
         return sessionUser;
     }
 
+    //get a list of all accounts that the current user owns
     public List<Account> returnMyAccounts() {
-        return accountDao.findAccountsByCustomerId(sessionUser.getSessionUser());
+        return accountDao.findAccountsByCustomerId(sessionUser.getSessionUser().getId().toString());
     }
 
+    //Takes current customer's id and the account id user selected to change to that account if owned
     public boolean changeToAccount(UUID customer_id, String account_id) {
 
         if(Integer.parseInt(account_id) < 0) {
             throw new NegativeAccountIdException("Account IDs can't be negative");
         }
-        account = accountDao.findAccountByCustomerAndAccountId(customer_id, account_id);
-        if(account == null) {
+        currentAccount = accountDao.findAccountByCustomerAndAccountId(customer_id, account_id);
+        if(currentAccount == null) {
             throw new UnownedAccountException("User does not own this account");
         }
-        sessionUser.getSessionUser().setCurrentAccount(account);
+        sessionUser.getSessionUser().setCurrentAccount(currentAccount);
         return true;
     }
 
+    //user validation to check if user entered a positive money value
     public boolean isPositiveNumber(String value) {
         double money = Double.parseDouble(value);
         if(money < 0) {
@@ -85,6 +91,7 @@ public class AccountService {
         return true;
     }
 
+    //user validation to check if user entered a number
     public boolean isNumeric(String value) {
         if(value == null || value.equals("")) {
             return false;
@@ -97,6 +104,7 @@ public class AccountService {
         return true;
     }
 
+    //user validation to check if it is a decimal value and if it has only two decimal places $1.00
     public boolean isProperFormat(String value) {
         //checks to see if it is a whole number
         if(Double.parseDouble(value) % 1 == 0) {
@@ -110,51 +118,15 @@ public class AccountService {
         return true;
     }
 
-    public boolean createNewAccount(String type) {
-        Account account = null;
-        if(type.equals("savings")) {
-            account = new SavingsAccount();
-        } else if(type.equals("checkings")) {
-            account = new CheckingsAccount();
-        }
-        account.setType(type);
+    public boolean createNewAccount(Account account) {
+
         account.setCustomer(sessionUser.getSessionUser());
 
         return accountDao.save(account) != null;
     }
 
-    public List<Transactions> viewAllTransactions(String customer_id) {
-        List<Transactions> list = accountDao.viewAllAccountsTransactions(customer_id);
-        if(list.isEmpty()) {
-            throw new EmptyTransactionsException("There are no previously existing transactions");
-        }
-        System.out.println("Not empty");
-        return list;
-    }
-    public List<Transactions> viewSingleTransactions(String account_id) {
-        if(!isNumeric(account_id) || !isInteger(account_id)) {
-            throw new InvalidRequestException("This is not an account_id");
-        }
-        if(!isPositiveNumber(account_id)) {
-            throw new InvalidRequestException("An account number cannot be negative");
-        }
-        List<Transactions> list = accountDao.selectTransactionByAccountId(account_id);
-        // TODO figure out how to get this to be null if possible
-        if(list == null) {
-            throw new UnownedAccountException("You do not own this account");
-        }
-        if(list.isEmpty()) {
-            throw new UnownedAccountException("There are no previously existing transactions");
-        }
-        return list;
+    public Account getCurrentAccount() {
+        return currentAccount;
     }
 
-    public boolean isInteger(String value) {
-        try {
-            Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
 }
